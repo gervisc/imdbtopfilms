@@ -5,8 +5,8 @@ with open('omdb.csv','r')as f:
     omdbmovies = list(csv.reader(f, delimiter=','))
 
 
-with open('watchlist.csv','r') as fin ,open('watchlistomdb.csv','w') as watchlistextended ,open('omdb.csv','w') as omdb:
-    writer = csv.writer(fout, lineterminator='\n')
+with open('watchlist.csv','r') as fin , open('omdb.csv','w') as omdb:
+
     reader = csv.reader(fin)
     all=[]
     row = next(reader)
@@ -20,4 +20,7 @@ with open('watchlist.csv','r') as fin ,open('watchlistomdb.csv','w') as watchlis
             row.append(NewDirector[k])
             all.append(row)
             k+=1
+
+with open('watchlistomdb.csv','w') as watchlistextended
+    writer = csv.writer(watchlistextended, lineterminator='\n')
     writer.writerows(all)
