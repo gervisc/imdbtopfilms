@@ -3,5 +3,7 @@ import json
 import requests
 
 
-def omdbget(movieid)
-    requests.get("http://www.omdbapi.com/?i=tt3896198&apikey=ad9a897d",)
+def omdbget(movieid):
+    print("http://www.omdbapi.com/?apikey=ad9a897d&i="+movieid)
+    resp = requests.get("http://www.omdbapi.com/?apikey=ad9a897d&i="+movieid)
+    return resp

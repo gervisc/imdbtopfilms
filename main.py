@@ -4,7 +4,11 @@ from keras.layers import Dense
 from ratings import GetRatingsFeatures
 from WatchList import GetWatchListFeatures
 from testfeatures import GetTestFeatures
+from omdbprep import omdbprep
 import numpy as np
+
+
+
 
 #lees csv in
 with open('ratings.csv','r') as f:
