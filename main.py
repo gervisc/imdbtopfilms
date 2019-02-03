@@ -19,7 +19,7 @@ for movie in moviesandtv:
    if movie[5] == 'movie':
        movies.append(movie)
 
-
+movies = omdbprep(movies)
 
 #np.random.seed(0)
 #np.random.shuffle(movies)
@@ -46,7 +46,7 @@ print(Xw)
 
 # Fit the model
 #model.fit(X, Ratings, epochs=1000, batch_size=5)
-model.fit(X, Ratings, epochs=100, batch_size=10)
+model.fit(X, Ratings, epochs=100, batch_size=1)
 
 
 predictions = model.predict(Xw)
