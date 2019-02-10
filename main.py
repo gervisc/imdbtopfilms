@@ -19,24 +19,26 @@ for movie in moviesandtv:
    if movie[5] == 'movie':
        movies.append(movie)
 
-movies = omdbprep(movies)
-
+movies = omdbprep(movies,'omdb.csv',0)
+print('ratings ingelezen')
 #np.random.seed(0)
 #np.random.shuffle(movies)
 #training, test = moviesX[:np.ceil(len(movies)*2/3)], moviesX[np.ceil(len(movies)*2/3)+1:]
 
-X,Ratings,maxreviews,Directors,Genres,Features,DiDates,AllDi = GetRatingsFeatures(movies)
+X,Ratings,maxreviews,Directors,Genres,Countrys,Features,DiDates,AllDi = GetRatingsFeatures(movies)
 #X,Ratings,maxreviews,Directors,Genres = GetRatingsFeatures(training)
 #TestX,TestRatings = GetTestFeatures(test,maxreviews,Directors,Genres)
 
 #print(np.shape(np.concatenate((X,Ratings.T), axis=0)))
 
-Xw,NewDirector = GetWatchListFeatures(maxreviews,Directors,Genres,DiDates,AllDi)
+print("ratings bewerkt")
 
+Xw,NewDirector = GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,DiDates,AllDi)
+print("")
 
 #create model
 model = Sequential()
-model.add(Dense(1,kernel_initializer='glorot_normal', activation='relu', input_dim=X.shape[1]))
+model.add(Dense(2,kernel_initializer='glorot_normal', activation='relu', input_dim=X.shape[1]))
 model.add(Dense(2, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
@@ -45,7 +47,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 print(Xw)
 
 # Fit the model
-#model.fit(X, Ratings, epochs=1000, batch_size=5)
+#model.fit(X, Ratings, epochs=100, batch_size=5)
 model.fit(X, Ratings, epochs=100, batch_size=1)
 
 

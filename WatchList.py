@@ -1,7 +1,8 @@
 import csv
 import numpy as np
+from omdbprep import omdbprep
 
-def GetWatchListFeatures(maxreviews,Directors,Genres,DirectorDates,AllDi):
+def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,DirectorDates,AllDi):
     #lees csv in
     with open('watchlist.csv','r') as f:
         moviesandtv = list(csv.reader(f,delimiter= ','))
@@ -11,6 +12,9 @@ def GetWatchListFeatures(maxreviews,Directors,Genres,DirectorDates,AllDi):
         if movie[7] == 'movie':
             movies.append(movie)
     #vind directors
+
+    movies = omdbprep(movies, 'omdbwatch.csv',1)
+
 
     #directors naar array
     NewDirector = np.ones(len(movies), dtype='datetime64[s]')
@@ -57,7 +61,24 @@ def GetWatchListFeatures(maxreviews,Directors,Genres,DirectorDates,AllDi):
             votes[i] = v
         i += 1
 
+    # directors naar array
+
+    MovieCountry = np.zeros((len(movies), len(Countrys)))
+    i = 0
+    for country in [di[17] for di in movies[0:]]:
+        k = 0
+        for country2 in country.split(', '):
+            if country2 in Countrys:
+                k += 1
+        for country2 in country.split(', '):
+            if country2 in Countrys:
+                MovieCountry[i, Countrys.index(country2)] = 1 / k
+
+
+        i += 1
+
 
     X1 = np.concatenate((ratings/10,(np.asarray([y[10] for y in movies[0:]],dtype=float)-1920)/100,votes/maxreviews))
-    X =  np.concatenate((MovieDirector,MovieGenre,X1.reshape(3,len(movies)).T), axis=1)
+    X =  np.concatenate((MovieDirector,MovieGenre,MovieCountry,X1.reshape(3,len(movies)).T), axis=1)
+    #print(MovieCountry)
     return X,NewDirector
