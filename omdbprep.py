@@ -51,7 +51,7 @@ def omdbprep(movies,stora,positionkey):
 
                 movie.append(country)
                 movie.append(actors)
-                movie.append(rated)
+                movie.append(rated.lower())
                 movie.append(wins)
                 movie.append(nominations)
                 movies[n]=movie
@@ -59,12 +59,10 @@ def omdbprep(movies,stora,positionkey):
             else:
                 movie.append("Unknown")
                 movie.append("")
-                movie.append("NOT RATED")
+                movie.append("Not Rated".lower())
                 movie.append(0)
                 movie.append(0)
                 movies[n] = movie
-                writer.writerow(movie)
-
     return movies
 
 

@@ -1,10 +1,12 @@
 import csv
 import numpy as np
 from omdbprep import omdbprep
+from DefineFeature import DefineFeatureWatchlist
+from utils import GetColumn
 
-def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,DirectorDates,AllDi):
+def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,Actors,ParentRatings,DirectorDates):
     #lees csv in
-    with open('watchlist.csv','r') as f:
+    with open('storage/watchlist.csv','r') as f:
         moviesandtv = list(csv.reader(f,delimiter= ','))
     #filter op movies
     movies = [];
@@ -13,35 +15,23 @@ def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,DirectorDates,AllD
             movies.append(movie)
     #vind directors
 
-    movies = omdbprep(movies, 'omdbwatch.csv',1)
+    movies = omdbprep(movies, 'storage/omdbwatch.csv',1)
 
+    FeaturesColumnDirector = GetColumn(movies, 14)
+    MovieDirector=DefineFeatureWatchlist(FeaturesColumnDirector, Directors, len(movies))
 
     #directors naar array
     NewDirector = np.ones(len(movies), dtype='datetime64[s]')
-    MovieDirector = np.zeros((len(movies),len(Directors)));
     i=0
-    for director in [di[14] for di in movies[0:]]:
-        k=0
+    for director in FeaturesColumnDirector:
         for director2 in director.split(', '):
-            if director2 in Directors:
-                k+=1
-        for director2 in director.split(', '):
-            if director2 in Directors:
-                MovieDirector[i,Directors.index(director2)] = 1/k
-
-            if director2 in AllDi:
-                NewDirector[i] = DirectorDates[AllDi.index(director2)]
+           if director2 in DirectorDates:
+                NewDirector[i] = DirectorDates[director2]
         i+=1
 
     #genres naar array
-    i=0
-    MovieGenre = np.zeros((len(movies),len(Genres)));
+    MovieGenre = DefineFeatureWatchlist(GetColumn(movies, 11), Genres, len(movies))
 
-    for genre in [di[11] for di in movies[0:]]:
-        for genre2 in genre.split(', '):
-            if genre2 in Genres:
-                MovieGenre[i,Genres.index(genre2)] = 1/len(genre.split(', '))
-        i+=1
     #x
     ratings=np.zeros(len(movies),dtype=float)
     i=0
@@ -62,23 +52,17 @@ def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,DirectorDates,AllD
         i += 1
 
     # directors naar array
-
-    MovieCountry = np.zeros((len(movies), len(Countrys)))
-    i = 0
-    for country in [di[17] for di in movies[0:]]:
-        k = 0
-        for country2 in country.split(', '):
-            if country2 in Countrys:
-                k += 1
-        for country2 in country.split(', '):
-            if country2 in Countrys:
-                MovieCountry[i, Countrys.index(country2)] = 1 / k
+    MovieCountry = DefineFeatureWatchlist(GetColumn(movies, 17), Countrys, len(movies))
 
 
-        i += 1
+    MovieActor = DefineFeatureWatchlist(GetColumn(movies, 18), Actors, len(movies))
 
 
-    X1 = np.concatenate((ratings/10,(np.asarray([y[10] for y in movies[0:]],dtype=float)-1920)/100,votes/maxreviews))
-    X =  np.concatenate((MovieDirector,MovieGenre,MovieCountry,X1.reshape(3,len(movies)).T), axis=1)
+    MovieParentRating = DefineFeatureWatchlist(GetColumn(movies, 19), ParentRatings, len(movies))
+
+
+
+    X1 = np.concatenate((np.asarray([r[20] for r in movies[0:]],dtype=float)/20,np.asarray([r[21] for r in movies[0:]],dtype=float)/100,ratings/10,(np.asarray([y[10] for y in movies[0:]],dtype=float)-1920)/100,votes/maxreviews))
+    X =  np.concatenate((MovieDirector,MovieGenre,MovieCountry,MovieActor,MovieParentRating,X1.reshape(5,len(movies)).T), axis=1)
     #print(MovieCountry)
-    return X,NewDirector
+    return X,NewDirector,movies
