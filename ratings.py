@@ -40,7 +40,7 @@ def GetRatingsFeatures(movies):
     Ratings = np.asarray([di[1] for di in movies[0:]],dtype=float)/10.0
     maxreviews = (np.max(np.asarray([v[10] for v in movies[0:]],dtype=float)))
     #x
-    X1 = np.concatenate((np.asarray([r[16] for r in movies[0:]],dtype=float)/20,np.asarray([r[17] for r in movies[0:]],dtype=float)/100,np.asarray([r[6] for r in movies[0:]],dtype=float)/10,(np.asarray([y[8] for y in movies[0:]],dtype=float)-1920)/100,np.asarray([v[10] for v in movies[0:]],dtype=float)/maxreviews))
+    X1 = np.concatenate((np.asarray([r[16] for r in movies[0:]],dtype=float)/20-0.5,np.asarray([r[17] for r in movies[0:]],dtype=float)/100-0.5,np.asarray([r[6] for r in movies[0:]],dtype=float)/10-0.5,(np.asarray([y[8] for y in movies[0:]],dtype=float)-1920)/100-0.5,np.asarray([v[10] for v in movies[0:]],dtype=float)/maxreviews-0.5))
     X =  np.concatenate((MovieFeatureDirectors,MovieFeatureGenre,MovieFeatureCountry,MovieFeatureActors,MovieFeatureParentRating,X1.reshape(5,len(movies)).T), axis=1)
     #print(Countrys)
     Features = ClippedFeaturesDirector + ClippedFeaturesGenre + ClippedFeaturesCountry +ClippedFeaturesActors+ClippedFeaturesParentRating+ ['wins','nominations','ratings','year','views']

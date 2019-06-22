@@ -29,7 +29,7 @@ def DefineFeatureRating(FeaturesColumn,minimumOccurence):
                 k+=1
         for feature in row.split(', '):
             if feature in ClippedFeatures:
-                MovieFeature[i,ClippedFeatures.index(feature)] = 1/k
+                MovieFeature[i,ClippedFeatures.index(feature)] = 1/k-0.5
 
 
         i+=1
@@ -48,7 +48,7 @@ def DefineFeatureWatchlist(FeaturesColumn,FeaturesReference,nmovies):
                 k+=1
         for director2 in director.split(', '):
             if director2 in FeaturesReference:
-                MovieDirector[i,FeaturesReference.index(director2)] = 1/k
+                MovieDirector[i,FeaturesReference.index(director2)] = 1/k-.5
         i+=1
     return MovieDirector
 

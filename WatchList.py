@@ -62,7 +62,7 @@ def GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,Actors,ParentRatin
 
 
 
-    X1 = np.concatenate((np.asarray([r[20] for r in movies[0:]],dtype=float)/20,np.asarray([r[21] for r in movies[0:]],dtype=float)/100,ratings/10,(np.asarray([y[10] for y in movies[0:]],dtype=float)-1920)/100,votes/maxreviews))
+    X1 = np.concatenate((np.asarray([r[20] for r in movies[0:]],dtype=float)/20-0.5,np.asarray([r[21] for r in movies[0:]],dtype=float)/100-0.5,ratings/10-0.5,(np.asarray([y[10] for y in movies[0:]],dtype=float)-1920)/100-0.5,votes/maxreviews-0.5))
     X =  np.concatenate((MovieDirector,MovieGenre,MovieCountry,MovieActor,MovieParentRating,X1.reshape(5,len(movies)).T), axis=1)
     #print(MovieCountry)
     return X,NewDirector,movies

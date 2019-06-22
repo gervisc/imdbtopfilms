@@ -5,6 +5,7 @@ from ratings import GetRatingsFeatures
 from WatchList import GetWatchListFeatures
 from omdbprep import omdbprep
 from keras import initializers
+from keras.callbacks import EarlyStopping
 import numpy as np
 from utils import GetColumn
 
@@ -19,12 +20,10 @@ for movie in moviesandtv:
    if movie[5] == 'movie':
        movies.append(movie)
 
-#test data#
-
+#data#
 movies = omdbprep(movies,'storage/omdb.csv',0)
 
-
-
+#features
 X,Ratings,maxreviews,Directors,Genres,Countrys,Actors,ParentRatings,Features,DiDates = GetRatingsFeatures(movies)
 
 Xw,NewDirector,movies = GetWatchListFeatures(maxreviews,Directors,Genres,Countrys,Actors,ParentRatings,DiDates)
@@ -34,21 +33,21 @@ Xw,NewDirector,movies = GetWatchListFeatures(maxreviews,Directors,Genres,Country
 
 #create model
 model = Sequential()
-model.add(Dense(1,kernel_initializer=initializers.RandomUniform(minval=-0.01, maxval=1, seed=None), activation='relu', input_dim=X.shape[1]))
-model.add(Dense(2, activation='relu'))
+model.add(Dense(1,kernel_initializer=initializers.glorot_uniform(seed=1), activation='relu', input_dim=X.shape[1]))
+model.add(Dense(4, activation='relu'))
 model.add(Dense(1, activation='linear'))
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 
 
 # Fit the model
+es = EarlyStopping(monitor='loss', mode='min', verbose=1, patience = 3,min_delta=1e-4)
+model.fit(X, Ratings, epochs=1000, callbacks=[es])
 
-model.fit(X, Ratings, epochs=50, batch_size=1)
 
 
-
-#model.fit(X, Ratings, validation_split=0.33, epochs=50, batch_size=1)
+#model.fit(X, Ratings, validation_split=0.33,  epochs=1000, callbacks=[es])
 predictions = model.predict(Xw)
 
 countrys=GetColumn(movies, 17)
